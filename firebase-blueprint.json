@@ -1,0 +1,183 @@
+{
+  "entities": {
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Public campus profile of a student or administrator without sensitive PII like email or password hash.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user ID" },
+        "fullName": { "type": "string", "description": "Student full name" },
+        "studentId": { "type": "string", "description": "Institutional registration number" },
+        "department": { "type": "string", "description": "Academic department" },
+        "semester": { "type": "integer", "description": "Current semester (1-8)" },
+        "graduationYear": { "type": "integer", "description": "Expected graduation year" },
+        "role": { "type": "string", "enum": ["STUDENT", "ADMIN"], "description": "RBAC role" },
+        "verificationStatus": { "type": "string", "enum": ["VERIFIED", "PENDING", "SUSPENDED"], "description": "Campus identity verification status" },
+        "resourcesListedCount": { "type": "integer", "description": "Count of resources listed" },
+        "resourcesSharedCount": { "type": "integer", "description": "Count of resources lent or transferred" },
+        "resourcesBorrowedCount": { "type": "integer", "description": "Count of resources borrowed" },
+        "joinedAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" }
+      },
+      "required": ["id", "fullName", "department", "semester", "graduationYear", "role", "verificationStatus", "joinedAt"]
+    },
+    "UserPrivateRecord": {
+      "title": "UserPrivateRecord",
+      "description": "Private user account data including institutional email address.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "emailVerified": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "email", "emailVerified", "updatedAt"]
+    },
+    "Resource": {
+      "title": "Resource",
+      "description": "Academic digital or physical resource listed on the exchange.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string", "description": "Catalog identifier such as CRX-2026-0101" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "resourceType": { "type": "string", "enum": ["PHYSICAL", "DIGITAL"] },
+        "category": { "type": "string" },
+        "subject": { "type": "string" },
+        "courseCode": { "type": "string" },
+        "department": { "type": "string" },
+        "semester": { "type": "integer" },
+        "academicYear": { "type": "string" },
+        "condition": { "type": "string", "enum": ["NEW", "GOOD", "FAIR", "NOT_APPLICABLE"] },
+        "lendingType": { "type": "string", "enum": ["BORROW", "GIVEAWAY", "DIGITAL_DOWNLOAD"] },
+        "availability": {
+          "type": "string",
+          "enum": ["AVAILABLE", "REQUESTED", "APPROVED", "BORROWED", "RETURN_REQUESTED", "RETURNED", "UNAVAILABLE"]
+        },
+        "moderationStatus": {
+          "type": "string",
+          "enum": ["APPROVED", "PENDING_REVIEW", "REJECTED", "FLAGGED"]
+        },
+        "ownerId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "ownerDepartment": { "type": "string" },
+        "location": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileType": { "type": "string" },
+        "fileSize": { "type": "integer" },
+        "downloadCount": { "type": "integer" },
+        "reportCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "code",
+        "title",
+        "description",
+        "resourceType",
+        "category",
+        "subject",
+        "department",
+        "semester",
+        "condition",
+        "lendingType",
+        "availability",
+        "moderationStatus",
+        "ownerId",
+        "ownerName",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "BorrowRequest": {
+      "title": "BorrowRequest",
+      "description": "State-machine tracked borrow or giveaway request for a physical resource.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "resourceTitle": { "type": "string" },
+        "resourceCode": { "type": "string" },
+        "requesterId": { "type": "string" },
+        "requesterName": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "requestedDurationDays": { "type": "integer" },
+        "dueDate": { "type": "string" },
+        "message": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["REQUESTED", "APPROVED", "BORROWED", "RETURN_REQUESTED", "RETURNED", "REJECTED", "CANCELLED", "OVERDUE"]
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "resourceId", "requesterId", "ownerId", "status", "createdAt", "updatedAt"]
+    },
+    "ResourceRequest": {
+      "title": "ResourceRequest",
+      "description": "An 'I Need' request posted by a student looking for an academic item.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "subject": { "type": "string" },
+        "department": { "type": "string" },
+        "semester": { "type": "integer" },
+        "resourceType": { "type": "string", "enum": ["PHYSICAL", "DIGITAL"] },
+        "preference": { "type": "string", "enum": ["BORROW", "GIVEAWAY", "DIGITAL_COPY"] },
+        "requiredUntil": { "type": "string" },
+        "requesterId": { "type": "string" },
+        "requesterName": { "type": "string" },
+        "status": { "type": "string", "enum": ["OPEN", "FULFILLED", "CLOSED"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "description", "category", "subject", "department", "semester", "resourceType", "preference", "requesterId", "status", "createdAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Security and moderation audit trail event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "action": { "type": "string" },
+        "actorId": { "type": "string" },
+        "actorName": { "type": "string" },
+        "targetType": { "type": "string" },
+        "targetId": { "type": "string" },
+        "details": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "action", "actorId", "targetType", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPublicProfile" },
+      "description": "Public student and staff directory profiles."
+    },
+    "/users_private/{userId}": {
+      "schema": { "$ref": "#/entities/UserPrivateRecord" },
+      "description": "Private user account attributes restricted to owner and admin."
+    },
+    "/resources/{resourceId}": {
+      "schema": { "$ref": "#/entities/Resource" },
+      "description": "Campus resource catalog items."
+    },
+    "/borrow_requests/{requestId}": {
+      "schema": { "$ref": "#/entities/BorrowRequest" },
+      "description": "Active and historical borrowing state transitions."
+    },
+    "/resource_requests/{requestId}": {
+      "schema": { "$ref": "#/entities/ResourceRequest" },
+      "description": "Student-posted 'I Need' resource requests."
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Immutable security and admin moderation audit logs."
+    }
+  }
+}

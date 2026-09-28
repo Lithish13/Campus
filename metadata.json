@@ -1,0 +1,6 @@
+{
+  "name": "Campus Resource Exchange",
+  "description": "A private university utility for students to share digital study materials, lend physical equipment, and request academic resources within their campus.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
